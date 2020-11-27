@@ -6,18 +6,22 @@ module.exports = {
   chainWebpack: config => {
     const dir = path.resolve(__dirname, 'src/assets/icons')
     config.module
-      .rule('svg')
-      .exclude.add(dir)
-      .end()
-    config.module
-      .rule('icons')
+      .rule('svg-sprite')
       .test(/\.svg$/)
       .include.add(dir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
+        extract: false,
         symbolId: 'icon-[name]'
       })
+      .end()
+    config.plugin('svg-sprite')
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      .use(require('svg-sprite-loader/plugin'), [{plainSprite: true}])
+    config.module
+      .rule('svg')
+      .exclude.add(dir)
   }
 }

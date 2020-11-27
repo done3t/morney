@@ -42,7 +42,10 @@ nav {
       width: 2.5em;
       height: 2.5em;
     }
+  }
 
+  > .item.router-link-active {
+    color: red;
   }
 }
 </style>
