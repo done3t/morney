@@ -24,6 +24,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/style/helper.scss";
+
 nav {
   display: flex;
   flex-direction: row;
@@ -45,7 +47,7 @@ nav {
   }
 
   > .item.router-link-active {
-    color: red;
+    color: $red;
   }
 }
 </style>
