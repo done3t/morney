@@ -5,20 +5,17 @@
 </template>
 
 <script lang="ts">
-export default {
-  name: 'Icon',
-  props: {
-    name: {
-      type: String,
-      required: true
-    },
-  },
-  computed: {
-    svgName() {
-      return `#icon-${this.name}`;
-    },
+import Vue from 'vue';
+import {Component, Prop} from 'vue-property-decorator';
+
+@Component
+export default class Icon extends Vue {
+  @Prop(String) name: string | undefined;
+
+  get svgName(): string {
+    return `#icon-${this.name}`;
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
