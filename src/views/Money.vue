@@ -1,5 +1,5 @@
 <template>
-  <Layout class-prefix="layout">
+  <Layout class-prefix="layout" :key="freshKey">
     {{ record }}
     <Tags :data-source.sync="tags" :value.sync="record.tags"/>
     <Notes :value.sync="record.notes"/>
@@ -28,6 +28,7 @@ type Record = {
   components: {NumberPad, Types, Notes, Tags},
 })
 export default class Money extends Vue {
+  freshKey = 1
   tags = ['衣', '食', '住', '行', '旅游'];
   recordList: Record[] = recordList;
   record: Record = {
@@ -39,7 +40,7 @@ export default class Money extends Vue {
 
   submitRecord() {
     this.saveRecord();
-    // this.resetPanel();
+    this.resetPanel();
   }
 
   saveRecord() {
@@ -49,10 +50,13 @@ export default class Money extends Vue {
   }
 
   resetPanel() {
-    this.record.tags = [];
-    this.record.notes = '';
-    this.record.type = '-';
-    this.record.amount = 0;
+    this.freshKey = Math.random();
+    this.record = {
+      tags: [],
+      notes: '',
+      type: '-',
+      amount: 0
+    };
   }
 
   @Watch('recordList')
