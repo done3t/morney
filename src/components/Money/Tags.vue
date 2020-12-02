@@ -52,6 +52,7 @@ export default class Tags extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  background: white;
 
   > .current {
     display: flex;
