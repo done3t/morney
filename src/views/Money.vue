@@ -1,7 +1,7 @@
 <template>
   <Layout class-prefix="layout" :key="freshKey">
     {{ record }}
-    <Tags :data-source.sync="tags" :value.sync="record.tags"/>
+    <Tags :value.sync="record.tags"/>
     <div class="notes">
       <FormItem field-name="备注"
                 placeholder="在这里输入备注"
@@ -26,7 +26,6 @@ import store from '@/store/index2';
 })
 export default class Money extends Vue {
   freshKey = 1;
-  tags = store.tagList;
   recordList: RecordItem[] = store.recordList;
   record: RecordItem = {
     tags: [],
