@@ -29,8 +29,7 @@ export default class FormItem extends Vue {
 <style lang="scss" scoped>
 .formItem {
   font-size: 14px;
-  height: 64px;
-  background: #f5f5f5;
+  height: 44px;
   display: flex;
   align-items: center;
 

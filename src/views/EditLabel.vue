@@ -10,9 +10,7 @@
                 @update:value="update"
                 field-name="标签名" placeholder="请输入标签名"/>
     </div>
-    <div class="button-wrapper">
-      <Button @click="remove">删除标签</Button>
-    </div>
+    <Button class="remove-btn" @click="remove">删除标签</Button>
   </Layout>
 </template>
 
@@ -55,12 +53,40 @@ export default class EditLabel extends Vue {
       }
     }
   }
+
   goBack() {
+    console.log('go:back:');
     this.$router.back();
   }
 }
 </script>
-
 <style lang="scss" scoped>
+.navBar {
+  font-size: 16px;
+  padding: 0.75em 1em;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
+  > .title {
+  }
+
+  > .leftIcon, > .rightIcon {
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+.form-wrapper {
+  background: white;
+  margin-top: 8px;
+}
+
+.remove-btn {
+  position: fixed;
+  bottom: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 </style>

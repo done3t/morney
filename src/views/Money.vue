@@ -2,9 +2,11 @@
   <Layout class-prefix="layout" :key="freshKey">
     {{ record }}
     <Tags :data-source.sync="tags" :value.sync="record.tags"/>
-    <FormItem field-name="备注"
-              placeholder="在这里输入备注"
-              v-model="record.notes"/>
+    <div class="notes">
+      <FormItem field-name="备注"
+                placeholder="在这里输入备注"
+                v-model="record.notes"/>
+    </div>
     <Types :type.sync="record.type"/>
     <NumberPad :value.sync="record.amount" @submit="submitRecord"/>
   </Layout>
@@ -17,23 +19,19 @@ import Types from '@/components/Money/Types.vue';
 import NumberPad from '@/components/Money/NumberPad.vue';
 import FormItem from '@/components/FormItem.vue';
 import {Component, Watch} from 'vue-property-decorator';
+import tagListModel from '@/models/tagListModel';
+import recordListModel from '@/models/recordListModel';
 
-const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]');
-type Record = {
-  tags: string[];
-  notes: string;
-  type: string;
-  amount: number;
-  createdAt?: Date;
-};
+const recordList: RecordItem[] = recordListModel.fetch();
+const tagList = tagListModel.fetch();
 @Component({
   components: {FormItem, NumberPad, Types, Tags},
 })
 export default class Money extends Vue {
   freshKey = 1;
-  tags = ['衣', '食', '住', '行', '旅游'];
-  recordList: Record[] = recordList;
-  record: Record = {
+  tags = tagList;
+  recordList: RecordItem[] = recordList;
+  record: RecordItem = {
     tags: [],
     notes: '',
     type: '-',
@@ -46,7 +44,7 @@ export default class Money extends Vue {
   }
 
   saveRecord() {
-    const recordReplica: Record = JSON.parse(JSON.stringify(this.record));
+    const recordReplica: RecordItem = recordListModel.clone(this.record);
     recordReplica.createdAt = new Date();
     this.recordList.push(recordReplica);
   }
@@ -63,7 +61,7 @@ export default class Money extends Vue {
 
   @Watch('recordList')
   onRecordListChange() {
-    window.localStorage.setItem('recordList', JSON.stringify(this.recordList));
+    recordListModel.save(this.recordList);
   }
 }
 </script>
@@ -74,6 +72,7 @@ export default class Money extends Vue {
 }
 </style>
 <style lang="scss" scoped>
-
-
+.notes {
+  padding: 10px 0;
+}
 </style>
