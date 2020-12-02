@@ -1,7 +1,7 @@
 import nextId from '@/lib/nextId';
 
 const localStorageKeyName = 'tagList';
-const {next} = nextId();
+const generateId = nextId();
 type Tag = {
   id: string;
   name: string;
@@ -25,7 +25,7 @@ const tagListModel: TagListModel = {
     if (names.includes(name)) {
       return 'duplicated';
     }
-    const id = next().value + '';
+    const id = generateId.next().value + '';
     this.data.push({id, name});
     this.save();
     return 'success';
