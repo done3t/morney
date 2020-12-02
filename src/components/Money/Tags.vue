@@ -2,7 +2,7 @@
   <div class="tags">
     <ul class="current">
       <li v-for="tag in dataSource" :key="tag"
-          :class="{selected: selectedTags.indexOf(tag) >= 0}"
+          :class="{selected: selectedTags.includes(tag)}"
           @click="toggle(tag)">{{ tag }}
       </li>
     </ul>
