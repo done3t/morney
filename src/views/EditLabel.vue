@@ -3,10 +3,10 @@
     <div class="navBar">
       <Icon class="leftIcon" name="left" @click="goBack"/>
       <span class="title">编辑标签</span>
-      <div class="rightIcon"></div>
+      <span class="rightIcon"/>
     </div>
     <div class="form-wrapper">
-      <FormItem :value="tag.name"
+      <FormItem :value="currentTag.name"
                 @change="update($event.target.value)"
                 field-name="标签名" placeholder="请输入标签名"/>
     </div>
@@ -19,35 +19,35 @@ import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import FormItem from '@/components/FormItem.vue';
 import Button from '@/components/Button.vue';
-import store from '@/store/index2';
 
 @Component({
   components: {Button, FormItem}
 })
 export default class EditLabel extends Vue {
-  tag?: Tag = undefined;
+
+  get currentTag() {
+    return this.$store.state.currentTag;
+  }
 
   created() {
     const id = this.$route.params.id;
-    this.tag = store.findTag(id);
-    if (!this.tag) {
+    this.$store.commit('fetchTags');
+    this.$store.commit('setCurrentTag', id);
+    if (!this.currentTag) {
       this.$router.replace('/404');
     }
   }
 
   update(name: string) {
-    if (this.tag) {
-      store.updateTag(this.tag.id, name);
+    if (this.currentTag) {
+      this.$store.commit('updateTag',
+          {id: this.currentTag.id, name});
     }
   }
 
   remove() {
-    if (this.tag) {
-      if (store.removeTag(this.tag.id)) {
-        this.goBack();
-      } else {
-        window.alert('删除失败');
-      }
+    if (this.currentTag) {
+      this.$store.commit('removeTag', this.currentTag.id);
     }
   }
 
