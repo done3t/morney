@@ -81,6 +81,7 @@ export default class NumberPad extends Vue {
     height: 72px;
     font-size: 36px;
     font-family: $font-mono;
+    background: white;
     display: flex;
     justify-content: flex-end;
     padding: 9px 16px;
