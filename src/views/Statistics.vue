@@ -1,7 +1,7 @@
 <template>
   <Layout>
     <Tabs class-prefix="type" :data-source="recordTypeList" :value.sync="type"/>
-    <ol>
+    <ol v-if="groupList.length > 0">
       <li v-for="(group, index) in groupList" :key="index">
         <h3 class="title">
           <span>{{ beautify(group.title) }}</span>
@@ -16,6 +16,9 @@
         </ol>
       </li>
     </ol>
+    <div v-else class="noResult">
+      还没有记录，快去记一笔吧~
+    </div>
   </Layout>
 </template>
 
@@ -40,7 +43,8 @@ export default class Statistics extends Vue {
 
 
   tagString(tags: Tag[]) {
-    return tags.length === 0 ? '无' : tags.join(',');
+    return tags.length === 0 ? '无' :
+        tags.map(t => t.name).join('，');
   }
 
   beautify(dateString: string) {
@@ -66,23 +70,23 @@ export default class Statistics extends Vue {
 
   get groupList() {
     const {recordList} = this;
-    if (recordList.length === 0) {
-      return [];
-    }
+
     const newList = clone(recordList)
         .filter(item => item.type === this.type)
-        .sort((a, b) => dayjs(b).diff(dayjs(a)));
-
+        .sort((a, b) => dayjs(b.createdAt).diff(dayjs(a.createdAt), 'day'));
+    if (newList.length === 0) {
+      return [];
+    }
     type Result = {
       title: string;
       total?: number;
       items: RecordItem[];
     }[]
     const result: Result = [];
-    const groupMap: Map<string, RecordItem[]> = groupBy(newList,
+    const groupMap = groupBy(newList,
         item => dayjs(item.createdAt).format('YYYY-MM-DD'));
     groupMap.forEach((value, key) => {
-      const resultItem = {title: key, items: value};
+      const resultItem = {title: key, items: value, total: 0};
       resultItem.total = value.reduce((sum, item) => sum += item.amount, 0);
       result.push(resultItem);
     });
@@ -127,5 +131,10 @@ export default class Statistics extends Vue {
   margin-right: auto;
   margin-left: 16px;
   color: #999;
+}
+
+.noResult {
+  padding: 16px;
+  text-align: center;
 }
 </style>

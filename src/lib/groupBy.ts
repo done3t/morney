@@ -1,4 +1,6 @@
-function groupBy<T>(list: Array<T>, keyGetter: Function) {
+type KeyGetter<T> = (item: T) => string
+
+function groupBy<T, K extends keyof T>(list: Array<T>, keyGetter: KeyGetter<T>): Map<string, Array<T>> {
   const map = new Map();
   list.forEach((item) => {
     const key = keyGetter(item);

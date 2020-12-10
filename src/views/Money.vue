@@ -1,6 +1,5 @@
 <template>
   <Layout class-prefix="layout" :key="freshKey">
-    {{ record }}
     <Tags :value.sync="record.tags"/>
     <div class="notes">
       <FormItem field-name="备注"
@@ -45,11 +44,18 @@ export default class Money extends Vue {
 
   submitRecord() {
     this.createRecord();
-    this.resetPanel();
+    // this.resetPanel();
   }
 
   createRecord() {
+    if (!this.record.tags || this.record.tags.length === 0) {
+      return window.alert('请至少选择一个标签');
+    }
     this.$store.commit('createRecord', this.record);
+    if (this.$store.state.createRecordError === null) {
+      window.alert('记录成功');
+      this.record.notes = '';
+    }
   }
 
   resetPanel() {
