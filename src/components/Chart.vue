@@ -9,7 +9,7 @@ import {EChartOption, ECharts, init} from 'echarts';
 
 @Component
 export default class Chart extends Vue {
-  @Prop() options?: EChartsOption;
+  @Prop() options?: EChartOption;
   chart?: ECharts;
 
   mounted() {

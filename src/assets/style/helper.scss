@@ -15,3 +15,7 @@ $color-shadow: rgba(0, 0, 0, 0.25);
 %outerShadow {
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
 }
+
+%topOuterShadow {
+  box-shadow: 0 -3px 3px -3px rgba(0, 0, 0, 0.25)
+}

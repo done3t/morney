@@ -1,20 +1,31 @@
 <template>
   <label class="formItem">
     <span class="name">{{ fieldName }}</span>
-    <input v-bind="$attrs"
-           :value="value"
-           v-on="inputListeners"/>
+    <template v-if="type === 'date'">
+      <input :type="type"
+             :value="formatDate(value)"
+             v-bind="$attrs"
+             v-on="inputListeners"/>
+    </template>
+    <template v-else>
+      <input :type="type"
+             :value="value"
+             v-bind="$attrs"
+             v-on="inputListeners"/>
+    </template>
   </label>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
+import dayjs from 'dayjs';
 
 @Component({inheritAttrs: false})
 export default class FormItem extends Vue {
   @Prop({default: ''}) readonly value!: string;
   @Prop({required: true}) readonly fieldName!: string;
+  @Prop({default: 'text'}) type?: string;
 
   get inputListeners(): object {
     return Object.assign({},
@@ -22,6 +33,10 @@ export default class FormItem extends Vue {
         {
           input: (event: InputEvent) => this.$emit('input', (event.target as HTMLInputElement).value)
         });
+  }
+
+  formatDate(isoString: string) {
+    return dayjs(isoString).format('YYYY-MM-DD');
   }
 }
 </script>

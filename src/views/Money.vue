@@ -1,10 +1,17 @@
 <template>
   <Layout class-prefix="layout" :key="freshKey">
+    {{ record }}
     <Tags :value.sync="record.tags"/>
     <div class="notes">
       <FormItem field-name="备注"
                 placeholder="在这里输入备注"
                 v-model="record.notes"/>
+    </div>
+    <div class="createdAt">
+      <FormItem field-name="日期"
+                type="date"
+                placeholder="在这里输入日期"
+                v-model="record.createdAt"/>
     </div>
     <Tabs :data-source="recordTypeList"
           :value.sync="record.type"/>
@@ -20,19 +27,22 @@ import FormItem from '@/components/FormItem.vue';
 import {Component} from 'vue-property-decorator';
 import Tabs from '@/components/Tabs.vue';
 import recordTypeList from '@/constants/recordTypeList';
+import dayjs from 'dayjs';
 
+const initRecord = {
+  tags: [],
+  notes: '',
+  type: '-',
+  amount: 0,
+  createdAt: dayjs().format('YYYY-MM-DD')
+};
 @Component({
   components: {Tabs, FormItem, NumberPad, Tags},
 })
 export default class Money extends Vue {
   recordTypeList = recordTypeList;
   freshKey = 1;
-  record: RecordItem = {
-    tags: [],
-    notes: '',
-    type: '-',
-    amount: 0
-  };
+  record: RecordItem = initRecord;
 
   get recordList() {
     return this.$store.state.recordList;
@@ -44,7 +54,6 @@ export default class Money extends Vue {
 
   submitRecord() {
     this.createRecord();
-    // this.resetPanel();
   }
 
   createRecord() {
@@ -57,16 +66,6 @@ export default class Money extends Vue {
       this.record.notes = '';
     }
   }
-
-  resetPanel() {
-    this.freshKey = Math.random();
-    this.record = {
-      tags: [],
-      notes: '',
-      type: '-',
-      amount: 0
-    };
-  }
 }
 </script>
 <style lang="scss">
@@ -76,7 +75,10 @@ export default class Money extends Vue {
 }
 </style>
 <style lang="scss" scoped>
-.notes {
+@import "~@/assets/style/helper.scss";
+
+.notes, .createdAt {
+  @extend %topOuterShadow;
   padding: 10px 0;
 }
 </style>
