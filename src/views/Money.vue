@@ -1,6 +1,5 @@
 <template>
   <Layout class-prefix="layout" :key="freshKey">
-    {{ record }}
     <Tags :value.sync="record.tags"/>
     <div class="notes">
       <FormItem field-name="备注"

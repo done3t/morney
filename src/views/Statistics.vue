@@ -1,6 +1,9 @@
 <template>
   <Layout>
     <Tabs class-prefix="type" :data-source="recordTypeList" :value.sync="type"/>
+    <div class="chart-wrapper" ref="chartWrapper">
+      <Chart class="chart" :options="chartOptions"/>
+    </div>
     <ol v-if="groupList.length > 0">
       <li v-for="(group, index) in groupList" :key="index">
         <h3 class="title">
@@ -26,21 +29,29 @@
 import Vue from 'vue';
 import Tabs from '@/components/Tabs.vue';
 import {Component} from 'vue-property-decorator';
-import intervalList from '@/constants/intervalList';
 import recordTypeList from '@/constants/recordTypeList';
 import dayjs from 'dayjs';
 import clone from '@/lib/clone';
 import groupBy from '@/lib/groupBy';
+import Chart from '@/components/Chart.vue';
+import _ from 'lodash';
 
 @Component({
-  components: {Tabs}
+  components: {Chart, Tabs}
 })
 export default class Statistics extends Vue {
   type = '-';
   interval = 'day';
-  intervalList = intervalList;
   recordTypeList = recordTypeList;
 
+  beforeCreate() {
+    this.$store.commit('fetchRecords');
+  }
+
+  mounted() {
+    const div = this.$refs.chartWrapper as HTMLDivElement;
+    div.scrollLeft = div.scrollWidth;
+  }
 
   tagString(tags: Tag[]) {
     return tags.length === 0 ? '无' :
@@ -93,8 +104,53 @@ export default class Statistics extends Vue {
     return result;
   }
 
-  beforeCreate() {
-    this.$store.commit('fetchRecords');
+  get chartOptions() {
+    const keys = Array.from(this.keyValueList.keys());
+    const values = Array.from(this.keyValueList.values());
+    return {
+      grid: {
+        right: 20,
+        left: 20,
+      },
+      xAxis: {
+        type: 'category',
+        data: keys,
+        axisTick: {alignWithLabel: true},
+        axisLine: {lineStyle: {color: '#666'}},
+        axisLabel: {
+          formatter: (value: string) => value.substring(5)
+        }
+      },
+      yAxis: {
+        type: 'value',
+        show: false
+      },
+      series: [{
+        data: values,
+        type: 'line',
+        symbol: 'circle',
+        symbolSize: 12,
+        itemStyle: {borderWidth: 1, color: '#666'},
+      }],
+      tooltip: {
+        show: true,
+        triggerOn: 'click',
+        position: 'top',
+        formatter: '{c}'
+      }
+    };
+
+  }
+
+  get keyValueList() {
+    const today = new Date();
+    const result = new Map();
+    for (let i = 29; i >= 0; i--) {
+      const dateString = dayjs(today).subtract(i, 'day').format('YYYY-MM-DD');
+      const found = _.find(this.groupList, {title: dateString});
+      result.set(dateString, found ? found.total : 0);
+    }
+    return result;
   }
 }
 </script>
@@ -136,5 +192,17 @@ export default class Statistics extends Vue {
 .noResult {
   padding: 16px;
   text-align: center;
+}
+
+.chart {
+  width: 430%;
+
+  &-wrapper {
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      //display: none;
+    }
+  }
 }
 </style>
