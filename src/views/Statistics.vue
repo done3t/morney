@@ -1,26 +1,30 @@
 <template>
-  <Layout>
-    <Tabs class-prefix="type" :data-source="recordTypeList" :value.sync="type"/>
+  <Layout class-prefix="statistics">
+    <div class="tab-wrapper">
+      <Tabs class-prefix="type" :data-source="recordTypeList" :value.sync="type"/>
+    </div>
     <div class="chart-wrapper" ref="chartWrapper">
       <Chart class="chart" :options="chartOptions"/>
     </div>
-    <ol v-if="groupList.length > 0">
-      <li v-for="(group, index) in groupList" :key="index">
-        <h3 class="title">
-          <span>{{ beautify(group.title) }}</span>
-          <span>￥{{ group.total }}</span></h3>
-        <ol>
-          <li v-for="item in group.items" :key="item.id"
-              class="record">
-            <span>{{ tagString(item.tags) }}</span>
-            <span class="notes">{{ item.notes }}</span>
-            <span>￥{{ item.amount }}</span>
-          </li>
-        </ol>
-      </li>
-    </ol>
-    <div v-else class="noResult">
-      还没有记录，快去记一笔吧~
+    <div class="data-wrapper">
+      <ol v-if="groupList.length > 0">
+        <li v-for="(group, index) in groupList" :key="index">
+          <h3 class="title">
+            <span>{{ beautify(group.title) }}</span>
+            <span>￥{{ group.total }}</span></h3>
+          <ol>
+            <li v-for="item in group.items" :key="item.id"
+                class="record">
+              <span>{{ tagString(item.tags) }}</span>
+              <span class="notes">{{ item.notes }}</span>
+              <span>￥{{ item.amount }}</span>
+            </li>
+          </ol>
+        </li>
+      </ol>
+      <div v-else class="noResult">
+        还没有记录，快去记一笔吧~
+      </div>
     </div>
   </Layout>
 </template>
@@ -157,47 +161,62 @@ export default class Statistics extends Vue {
 
 <style lang="scss" scoped>
 ::v-deep {
-  .type-tabs-item {
+  .type-tabs {
+    .type-tabs-item {
+      background: white;
+    }
+
+    .interval-tabs-item {
+      height: 48px;
+    }
+  }
+}
+
+.tab-wrapper {
+  position: fixed;
+  width: clamp(15ch, 100vw, 500px);
+  top: 0;
+  z-index: 2;
+}
+
+.data-wrapper {
+  flex: 1;
+  overflow: auto;
+
+  %item {
+    padding: 8px 16px;
+    line-height: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+  }
+
+  .title {
+    @extend %item;
+  }
+
+  .record {
     background: white;
+    @extend %item;
   }
 
-  .interval-tabs-item {
-    height: 48px;
+  .notes {
+    margin-right: auto;
+    margin-left: 16px;
+    color: #999;
   }
-}
 
-%item {
-  padding: 8px 16px;
-  line-height: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
-}
-
-.title {
-  @extend %item;
-}
-
-.record {
-  background: white;
-  @extend %item;
-}
-
-.notes {
-  margin-right: auto;
-  margin-left: 16px;
-  color: #999;
-}
-
-.noResult {
-  padding: 16px;
-  text-align: center;
+  .noResult {
+    padding: 16px;
+    text-align: center;
+  }
 }
 
 .chart {
   width: 430%;
 
   &-wrapper {
+    margin-top: 64px;
     overflow: auto;
 
     &::-webkit-scrollbar {
